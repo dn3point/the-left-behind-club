@@ -40,7 +40,7 @@ async function fetchLiveScores(): Promise<ApiMatch[]> {
       return [];
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { matches?: ApiMatch[] };
     return data.matches || [];
   } catch (err) {
     console.error('Failed to fetch scores:', err);

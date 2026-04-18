@@ -1,6 +1,6 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import * as schema from '../schema';
 import { generateFunQuestions } from '../seed/fun-questions';
 import 'dotenv/config';
