@@ -1,0 +1,46 @@
+name: Manage Email Whitelist
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - add-emails
+          - remove-emails
+          - list-emails
+      emails:
+        description: 'Comma-separated email addresses (for add/remove)'
+        required: false
+        type: string
+
+jobs:
+  manage-whitelist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Manage whitelist
+        working-directory: packages/db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          pnpm tsx src/scripts/manage-whitelist.ts \
+            --action "${{ inputs.action }}" \
+            --emails "${{ inputs.emails }}"
+
+      - name: Summary
+        run: echo "✅ Whitelist action '${{ inputs.action }}' completed"

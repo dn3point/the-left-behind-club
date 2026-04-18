@@ -1,0 +1,60 @@
+name: Seed & Sync Match Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - seed-all
+          - sync-matches
+          - generate-fun-questions
+      skip_fun_questions:
+        description: 'Skip fun question generation (for seed-all)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  seed-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run seed/sync
+        working-directory: packages/db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SKIP_FUN_QUESTIONS: ${{ inputs.skip_fun_questions }}
+        run: |
+          case "${{ inputs.action }}" in
+            seed-all)
+              echo "Running full seed (teams, matches, questions)..."
+              pnpm db:seed
+              ;;
+            sync-matches)
+              echo "Syncing match results from external API..."
+              pnpm db:sync
+              ;;
+            generate-fun-questions)
+              echo "Generating fun questions only..."
+              pnpm db:fun-questions
+              ;;
+          esac
+
+      - name: Summary
+        run: echo "✅ Action '${{ inputs.action }}' completed successfully"

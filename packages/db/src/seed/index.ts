@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import * as schema from '../schema';
 import { teams as teamData } from './teams';
 import { generateGroupMatches, generateKnockoutMatches } from './matches';
+import { generateFunQuestions } from './fun-questions';
 import 'dotenv/config';
 
 const DATABASE_URL =
@@ -169,6 +170,68 @@ async function seed() {
   }
 
   console.log(`Created winner + score questions for ${allMatches.length} matches`);
+
+  // 6. Generate fun questions for group matches
+  const skipFun = process.env.SKIP_FUN_QUESTIONS === 'true';
+  if (!skipFun) {
+    console.log('\nGenerating fun questions for group matches...');
+    // Build a lookup: teamId -> team info
+    const teamLookup: Record<string, { name: string; nameZh: string }> = {};
+    for (const team of teamData) {
+      const id = insertedTeams[team.code];
+      if (id) teamLookup[id] = { name: team.name, nameZh: team.nameZh };
+    }
+
+    let funCount = 0;
+    for (const match of allMatches) {
+      const home = match.homeTeamId ? teamLookup[match.homeTeamId] : null;
+      const away = match.awayTeamId ? teamLookup[match.awayTeamId] : null;
+      if (!home || !away) continue;
+
+      // Check if fun questions already exist for this match
+      const existing = await db
+        .select()
+        .from(schema.guessQuestions)
+        .where(eq(schema.guessQuestions.matchId, match.id));
+      const hasFun = existing.some((q) => q.type === 'fun');
+      if (hasFun) {
+        console.log(`  Skipping match #${match.matchNumber} (already has fun questions)`);
+        continue;
+      }
+
+      const funQuestions = await generateFunQuestions(
+        home.name,
+        home.nameZh,
+        away.name,
+        away.nameZh,
+        5
+      );
+
+      for (let i = 0; i < funQuestions.length; i++) {
+        const q = funQuestions[i];
+        await db.insert(schema.guessQuestions).values({
+          matchId: match.id,
+          tournamentId: tournament.id,
+          type: 'fun',
+          scoringMode: q.scoringMode,
+          questionText: q.questionText,
+          questionTextZh: q.questionTextZh,
+          options: JSON.stringify(q.options),
+          points: 2,
+          sortOrder: 10 + i,
+        });
+      }
+
+      funCount++;
+      console.log(
+        `  Match #${match.matchNumber}: ${home.name} vs ${away.name} - ${funQuestions.length} fun questions`
+      );
+    }
+
+    console.log(`Generated fun questions for ${funCount} matches`);
+  } else {
+    console.log('\nSkipping fun questions (SKIP_FUN_QUESTIONS=true)');
+  }
 
   // Summary
   const totalMatches = groupMatches.length + knockoutMatches.length;
