@@ -1,101 +1,163 @@
-# TheLeftBehindClub
+# The Left-Behind Club
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A private group platform for friends to stay connected through shared activities. Built with Next.js 16, Supabase, and deployed on Vercel.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Current Modules
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- **FIFA World Cup 2026** (`/fifa2026`) - Predict match winners, exact scores, and answer fun questions. Compete on the leaderboard.
 
-## Run tasks
+## Tech Stack
 
-To run the dev server for your app, use:
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) + React 19 |
+| Monorepo | Nx |
+| Styling | Tailwind CSS + shadcn/ui |
+| Animation | Framer Motion |
+| Auth | Supabase Auth (Google OAuth) |
+| Database | Supabase PostgreSQL |
+| ORM | Drizzle ORM |
+| i18n | next-intl (Chinese / English) |
+| Email | Resend |
+| Hosting | Vercel |
+| Package Manager | pnpm |
 
-```sh
-npx nx dev web
+## Project Structure
+
+```
+the-left-behind-club/
+├── apps/
+│   └── web/                    # Next.js app
+│       ├── app/
+│       │   ├── page.tsx        # Portal (module hub)
+│       │   ├── login/          # Google sign-in
+│       │   ├── auth/callback/  # OAuth callback
+│       │   └── fifa2026/       # World Cup module
+│       │       ├── page.tsx            # Dashboard
+│       │       ├── matches/            # Match list & detail
+│       │       ├── champion/           # Tournament winner guess
+│       │       ├── leaderboard/        # Rankings
+│       │       └── my-guesses/         # Personal history
+│       ├── components/ui/      # shadcn/ui components
+│       ├── lib/
+│       │   ├── supabase/       # Supabase client (server/client/middleware)
+│       │   └── utils.ts        # Utility functions
+│       ├── i18n/               # next-intl config
+│       └── messages/           # en.json, zh.json
+├── packages/
+│   └── db/                     # Shared database package
+│       └── src/schema/         # Drizzle schema (core + fifa2026)
+├── supabase/
+│   ├── config.toml             # Local Supabase config
+│   ├── migrations/             # SQL migrations
+│   └── seed.sql                # Seed data
+└── .env.example                # Environment variable template
 ```
 
-To create a production bundle:
+## Prerequisites
 
-```sh
-npx nx build web
+- [Node.js](https://nodejs.org/) >= 20
+- [pnpm](https://pnpm.io/) >= 9
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for local Supabase, allocate >= 8 GB RAM)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) (`brew install supabase/tap/supabase`)
+
+## Getting Started
+
+### 1. Clone and install
+
+```bash
+git clone git@github.com:dn3point/the-left-behind-club.git
+cd the-left-behind-club
+pnpm install
 ```
 
-To see all available targets to run for a project, run:
+### 2. Start local Supabase
 
-```sh
-npx nx show project web
+Make sure Docker Desktop is running with at least 8 GB memory allocated.
+
+```bash
+supabase start
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+This will:
+- Start local PostgreSQL, Auth, Studio, and other services
+- Apply migrations to create all tables
+- Seed initial data (allowed emails, FIFA 2026 module)
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+After startup, you'll see the local URLs and keys printed in the terminal.
 
-## Add new projects
+### 3. Configure environment
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+Copy the example env file:
 
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/next:app demo
+```bash
+cp .env.example apps/web/.env.local
 ```
 
-To generate a new library, use:
+Update `apps/web/.env.local` with the values from `supabase start` output:
 
-```sh
-npx nx g @nx/react:lib mylib
+```env
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key from supabase start>
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+### 4. (Optional) Set up Google OAuth for local testing
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/)
+2. Go to **APIs & Services > Credentials > Create OAuth Client ID**
+3. Add authorized redirect URI: `http://127.0.0.1:54321/auth/v1/callback`
+4. Create a `.env` file in the project root:
+   ```env
+   GOOGLE_CLIENT_ID=your-client-id
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   ```
+5. Restart Supabase: `supabase stop --no-backup && supabase start`
 
-## Set up CI!
+### 5. Start the dev server
 
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
+```bash
+pnpm nx dev web
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+Visit [http://localhost:3000](http://localhost:3000).
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Useful Commands
 
-### Step 2
+| Command | Description |
+|---------|-------------|
+| `pnpm nx dev web` | Start dev server |
+| `pnpm nx build web` | Production build |
+| `supabase start` | Start local Supabase |
+| `supabase stop` | Stop local Supabase |
+| `supabase db reset` | Reset DB and re-apply migrations + seed |
+| `supabase studio` | Open Supabase Studio (http://127.0.0.1:54323) |
 
-Use the following command to configure a CI workflow for your workspace:
+## Local Services
 
-```sh
-npx nx g ci-workflow
-```
+| Service | URL |
+|---------|-----|
+| Web App | http://localhost:3000 |
+| Supabase API | http://127.0.0.1:54321 |
+| Supabase Studio | http://127.0.0.1:54323 |
+| Inbucket (email) | http://127.0.0.1:54324 |
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Database Schema
 
-## Install Nx Console
+The schema is designed to be extensible for future modules:
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+- **Core tables**: `users`, `modules`, `module_members`, `allowed_emails`
+- **FIFA 2026 tables**: `teams`, `matches`, `guess_questions`, `user_guesses`, `tournament_winner_guesses`, `leaderboards`
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Guess questions support two scoring modes:
+- `exact` - Points for matching the correct answer (match winner, score predictions)
+- `majority` - Points for picking the most popular answer (fun/culture questions)
 
-## Useful links
+## Access Control
 
-Learn more:
+This is a private app. Only whitelisted email addresses can access it:
+1. User signs in with Google
+2. Middleware checks if the user's email exists in `allowed_emails` table
+3. If not whitelisted, they see an unauthorized message
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Add members by inserting emails into the `allowed_emails` table via Supabase Studio or a seed file.
