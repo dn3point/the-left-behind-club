@@ -40,7 +40,7 @@ export default async function MatchDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  let userGuesses: Record<string, string> = {};
+  const userGuesses: Record<string, string> = {};
   if (user) {
     const questionIds = (questions || []).map((q: any) => q.id);
     if (questionIds.length > 0) {

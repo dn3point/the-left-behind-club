@@ -17,7 +17,7 @@ const fallbackTemplates: ((home: string, homeZh: string, away: string, awayZh: s
     scoringMode: 'majority',
     type: 'fun',
   }),
-  (home, homeZh, away, awayZh) => ({
+  (home, _homeZh, away, _awayZh) => ({
     questionText: `Which team's jersey looks cooler?`,
     questionTextZh: `哪支球队的球衣更酷？`,
     options: [home, away],
@@ -31,14 +31,14 @@ const fallbackTemplates: ((home: string, homeZh: string, away: string, awayZh: s
     scoringMode: 'majority',
     type: 'fun',
   }),
-  (home, homeZh, away, awayZh) => ({
+  (_home, _homeZh, _away, _awayZh) => ({
     questionText: `Will the total goals be odd or even?`,
     questionTextZh: `总进球数是奇数还是偶数？`,
     options: ['Odd', 'Even'],
     scoringMode: 'exact',
     type: 'fun',
   }),
-  (home, homeZh, away, awayZh) => ({
+  (_home, _homeZh, _away, _awayZh) => ({
     questionText: `Will there be a goal in the first 15 minutes?`,
     questionTextZh: `前15分钟会有进球吗？`,
     options: ['Yes', 'No'],
@@ -52,7 +52,7 @@ const fallbackTemplates: ((home: string, homeZh: string, away: string, awayZh: s
     scoringMode: 'majority',
     type: 'fun',
   }),
-  (home, homeZh, away, awayZh) => ({
+  (_home, _homeZh, _away, _awayZh) => ({
     questionText: `Will there be a red card in this match?`,
     questionTextZh: `这场比赛会有红牌吗？`,
     options: ['Yes', 'No'],
@@ -66,7 +66,7 @@ const fallbackTemplates: ((home: string, homeZh: string, away: string, awayZh: s
     scoringMode: 'majority',
     type: 'fun',
   }),
-  (home, homeZh, away, awayZh) => ({
+  (_home, _homeZh, _away, _awayZh) => ({
     questionText: `Total corners: over or under 9?`,
     questionTextZh: `总角球数：大于还是小于9？`,
     options: ['Over 9', 'Under 9'],
