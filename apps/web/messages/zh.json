@@ -1,0 +1,48 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "login": "登录",
+    "logout": "退出登录",
+    "language": "语言",
+    "wip": "建设中",
+    "back": "返回",
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认",
+    "submit": "提交"
+  },
+  "portal": {
+    "title": "留守儿童俱乐部",
+    "subtitle": "保持联系，在一起",
+    "modules": "活动",
+    "moduleDescFifa": "预测比赛，赢取荣耀"
+  },
+  "fifa2026": {
+    "title": "2026年FIFA世界杯",
+    "subtitle": "竞猜赢大奖",
+    "matches": "比赛",
+    "leaderboard": "排行榜",
+    "myGuesses": "我的竞猜",
+    "champion": "冠军",
+    "dashboard": "首页",
+    "nextMatch": "下一场比赛",
+    "yourRank": "你的排名",
+    "guessNow": "立即竞猜",
+    "guessLocked": "竞猜已锁定",
+    "guessClosed": "竞猜已结束",
+    "matchWinner": "比赛胜负",
+    "exactScore": "精确比分",
+    "funQuestions": "趣味竞猜",
+    "points": "积分",
+    "rank": "排名",
+    "player": "玩家",
+    "noGuessYet": "暂无数据",
+    "timeLeft": "竞猜剩余时间"
+  },
+  "auth": {
+    "signInWith": "使用Google登录",
+    "notAuthorized": "你的账号未被授权访问此应用。",
+    "contactAdmin": "请联系管理员获取访问权限。"
+  }
+}

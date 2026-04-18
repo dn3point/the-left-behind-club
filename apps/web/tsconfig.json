@@ -28,6 +28,12 @@
     "app/**/*.tsx",
     "app/**/*.js",
     "app/**/*.jsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "i18n/**/*.ts",
+    "messages/**/*.json",
+    "middleware.ts",
     "../../apps/web/.next/types/**/*.ts",
     "../../dist/apps/web/.next/types/**/*.ts",
     "next-env.d.ts"

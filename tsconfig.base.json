@@ -16,6 +16,9 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@the-left-behind-club/source"]
+    "customConditions": ["@the-left-behind-club/source"],
+    "paths": {
+      "@the-left-behind-club/db": ["packages/db/src/index.ts"]
+    }
   }
 }

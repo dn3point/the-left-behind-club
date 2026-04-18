@@ -1,0 +1,48 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "language": "Language",
+    "wip": "Work in Progress",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit"
+  },
+  "portal": {
+    "title": "The Left-Behind Club",
+    "subtitle": "Stay connected, stay together",
+    "modules": "Activities",
+    "moduleDescFifa": "Predict matches & win glory"
+  },
+  "fifa2026": {
+    "title": "FIFA World Cup 2026",
+    "subtitle": "Predict & Win",
+    "matches": "Matches",
+    "leaderboard": "Leaderboard",
+    "myGuesses": "My Guesses",
+    "champion": "Champion",
+    "dashboard": "Home",
+    "nextMatch": "Next Match",
+    "yourRank": "Your Rank",
+    "guessNow": "Guess Now",
+    "guessLocked": "Guess Locked",
+    "guessClosed": "Guessing Closed",
+    "matchWinner": "Match Winner",
+    "exactScore": "Exact Score",
+    "funQuestions": "Fun Questions",
+    "points": "Points",
+    "rank": "Rank",
+    "player": "Player",
+    "noGuessYet": "No data yet",
+    "timeLeft": "Time left to guess"
+  },
+  "auth": {
+    "signInWith": "Sign in with Google",
+    "notAuthorized": "Your account is not authorized to access this app.",
+    "contactAdmin": "Please contact the admin for access."
+  }
+}
