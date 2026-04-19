@@ -34,21 +34,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Install Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Link Supabase project
-        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-
       - name: Run migrations
         if: inputs.action == 'migrate' || inputs.action == 'migrate-and-seed'
-        run: supabase db push
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Applying migrations to production database..."
+          for f in supabase/migrations/*.sql; do
+            echo "Applying $f..."
+            psql "$DATABASE_URL" -f "$f"
+          done
+          echo "Applying seed.sql..."
+          psql "$DATABASE_URL" -f supabase/seed.sql
+          echo "✅ Migrations applied"
 
       - name: Run seed
         if: inputs.action == 'seed' || inputs.action == 'migrate-and-seed'
