@@ -17,18 +17,26 @@ async function seed() {
   const db = drizzle(client, { schema });
 
   // 1. Get or create the FIFA 2026 module
-  console.log('Finding FIFA 2026 module...');
-  const [tournament] = await db
+  console.log('Finding or creating FIFA 2026 module...');
+  let [tournament] = await db
     .select()
     .from(schema.modules)
     .where(eq(schema.modules.slug, 'fifa2026'));
 
   if (!tournament) {
-    console.error(
-      'FIFA 2026 module not found. Run supabase db reset first to apply seed.sql'
-    );
-    await client.end();
-    process.exit(1);
+    console.log('FIFA 2026 module not found, creating...');
+    [tournament] = await db
+      .insert(schema.modules)
+      .values({
+        slug: 'fifa2026',
+        name: 'FIFA World Cup 2026',
+        nameZh: '2026年FIFA世界杯',
+        description: 'Predict matches & win glory',
+        descriptionZh: '预测比赛，赢取荣耀',
+        type: 'tournament',
+        status: 'active',
+      })
+      .returning();
   }
 
   console.log(`Tournament ID: ${tournament.id}`);
